@@ -1,0 +1,49 @@
+services:
+  spark-master:
+    container_name: spark-master
+    image: custom-spark-local:3.5.3
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+      - "4040:4040"
+    volumes:
+      - ./apps:/opt/spark-apps
+      - /Users/mbold1911/Documents/PROG/Pyth/pet_projects/spark_k8s_test/apps:/opt/spark-apps/k8s_test:ro
+      - ./data:/opt/spark-data
+    environment:
+      - SPARK_LOCAL_IP=spark-master
+      - SPARK_WORKLOAD=master
+  spark-worker-1:
+    container_name: spark-worker-1
+    image: custom-spark-local:3.5.3
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-1
+    volumes:
+      - ./apps:/opt/spark-apps
+      - /Users/mbold1911/Documents/PROG/Pyth/pet_projects/spark_k8s_test/apps:/opt/spark-apps/k8s_test:ro
+      - ./data:/opt/spark-data
+  spark-worker-2:
+    container_name: spark-worker-2
+    image: custom-spark-local:3.5.3
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-2
+    volumes:
+      - ./apps:/opt/spark-apps
+      - /Users/mbold1911/Documents/PROG/Pyth/pet_projects/spark_k8s_test/apps:/opt/spark-apps/k8s_test:ro
+      - ./data:/opt/spark-data
